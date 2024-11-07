@@ -1,0 +1,62 @@
+service: reto-swapi
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  architecture: arm64
+  stage: production
+  region: us-east-2
+  memorySize: 2048
+  logRetentionInDays: 1
+  timeout: 900
+  environment:
+    URL_SWAPI_FILMS: https://swapi.py4e.com/api/films/
+    URL_SWAPI_PEOPLE: https://swapi.py4e.com/api/people/
+    URL_SWAPI_PLANETS: https://swapi.py4e.com/api/planets/
+    URL_SWAPI_SPECIES: https://swapi.py4e.com/api/species/
+    URL_SWAPI_STARTSHIPS: https://swapi.py4e.com/api/starships/
+    URL_SWAPI_VEHICLES: https://swapi.py4e.com/api/vehicles/
+    DB_HOST: 192.145.239.40
+    DB_PORT: 3306
+    DB_NAME: ensolu7_aws_node_basic
+    DB_USERNAME: ensolu7_user_aws_node_basic
+    DB_PASSWORD:
+    DB_SSLMODE: require
+    OPENAI_API_KEY:
+
+functions:
+  api:
+    handler: dist/lambda.handler
+    timeout: 30
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+
+plugins:
+  - serverless-offline
+  - serverless-jetpack
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+  jetpack:
+    packager: 'npm'
+    excludeDevDependencies: true
+    webpack:
+      includeModules: true
+
+package:
+  individually: true
+  exclude:
+    - test/**
+    - coverage/**
+    - .vscode/**
+    - .gitignore
+    - .eslintrc.js
+    - tsconfig.json
+    - tsconfig.build.json
+    - src/tests/**
+    - tsconfig.json
+    - .vscode/**
+    - .git/**
